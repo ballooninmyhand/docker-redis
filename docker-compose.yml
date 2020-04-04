@@ -1,0 +1,64 @@
+version: "3"
+services:
+  redis-master:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-master
+    ports:
+      - ${REDIS_HOST_PORT}:6379
+    volumes:
+      - ${REDIS_CONF_DIR}:/etc/redis
+      - ${REDIS_DATA_DIR}:/data
+      - ${REDIS_LOG_DIR}:/var/log/redis
+    restart: always
+    networks:
+      default:
+        ipv4_address: 172.20.0.7
+    environment:
+      TZ: ${TIMEZONE}
+    privileged: true
+    command: ["/bin/bash","/etc/redis/start.sh"]
+  redis-slave-1:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-slave-1
+    ports:
+      - ${REDIS_SLAVE_1_HOST_PORT}:6379
+    volumes:
+      - ${REDIS_SLAVE_1_CONF_DIR}:/etc/redis
+      - ${REDIS_SLAVE_1_DATA_DIR}:/data
+      - ${REDIS_SLAVE_1_LOG_DIR}:/var/log/redis
+    restart: always
+    depends_on:
+      - redis-master
+    networks:
+      default:
+        ipv4_address: 172.20.0.8
+    environment:
+      TZ: ${TIMEZONE}
+    privileged: true
+    command: ["/bin/bash","/etc/redis/start.sh"]
+  redis-slave-2:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-slave-2
+    ports:
+      - ${REDIS_SLAVE_2_HOST_PORT}:6379
+    volumes:
+      - ${REDIS_SLAVE_2_CONF_DIR}:/etc/redis
+      - ${REDIS_SLAVE_2_DATA_DIR}:/data
+      - ${REDIS_SLAVE_2_LOG_DIR}:/var/log/redis
+    restart: always
+    depends_on:
+      - redis-master
+    networks:
+      default:
+        ipv4_address: 172.20.0.9
+    environment:
+      TZ: ${TIMEZONE}
+    privileged: true
+    command: ["/bin/bash","/etc/redis/start.sh"]
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
