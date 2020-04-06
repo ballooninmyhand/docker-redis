@@ -5,6 +5,7 @@ services:
     container_name: redis-master
     ports:
       - ${REDIS_HOST_PORT}:6379
+      - ${REDIS_SENTINEL_1_HOST_PORT}:26379
     volumes:
       - ${REDIS_CONF_DIR}:/etc/redis
       - ${REDIS_DATA_DIR}:/data
@@ -12,7 +13,7 @@ services:
     restart: always
     networks:
       default:
-        ipv4_address: 172.20.0.7
+        ipv4_address: 172.20.0.4
     environment:
       TZ: ${TIMEZONE}
     privileged: true
@@ -22,6 +23,7 @@ services:
     container_name: redis-slave-1
     ports:
       - ${REDIS_SLAVE_1_HOST_PORT}:6379
+      - ${REDIS_SENTINEL_2_HOST_PORT}:26379
     volumes:
       - ${REDIS_SLAVE_1_CONF_DIR}:/etc/redis
       - ${REDIS_SLAVE_1_DATA_DIR}:/data
@@ -31,7 +33,7 @@ services:
       - redis-master
     networks:
       default:
-        ipv4_address: 172.20.0.8
+        ipv4_address: 172.20.0.5
     environment:
       TZ: ${TIMEZONE}
     privileged: true
@@ -41,6 +43,7 @@ services:
     container_name: redis-slave-2
     ports:
       - ${REDIS_SLAVE_2_HOST_PORT}:6379
+      - ${REDIS_SENTINEL_3_HOST_PORT}:26379
     volumes:
       - ${REDIS_SLAVE_2_CONF_DIR}:/etc/redis
       - ${REDIS_SLAVE_2_DATA_DIR}:/data
@@ -50,7 +53,7 @@ services:
       - redis-master
     networks:
       default:
-        ipv4_address: 172.20.0.9
+        ipv4_address: 172.20.0.6
     environment:
       TZ: ${TIMEZONE}
     privileged: true
